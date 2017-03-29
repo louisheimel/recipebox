@@ -131,7 +131,7 @@ class RecipeBox extends Component {
     super(props);
     this.state = {
       modalShow: false,
-      recipes: [
+      recipes: JSON.parse(localStorage.getItem('recipes')) || [
         {
           description: 'wontons',
           ingredients: ['won', 'tons']
@@ -140,11 +140,8 @@ class RecipeBox extends Component {
           description: 'eggrolls',
           ingredients: ['egg', 'rolls']
         }
-      ]
+      ].sort((a, b) => { return (a.description < b.description) ? -1 : (a.description > b.description ? 1 : 0) } )
     }
-    this.setState({
-      recipes: this.state.recipes.sort((a, b) => { return (a.description < b.description) ? -1 : (a.description > b.description ? 1 : 0) } ),
-    })
     this.delete = this.delete.bind(this);
     this.edit = this.edit.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
@@ -159,6 +156,8 @@ class RecipeBox extends Component {
   delete(recipe) {
     this.setState({
       recipes: this.state.recipes.filter((e) => { return e.description !== recipe; })
+    }, () => {
+      localStorage.setItem('recipes', JSON.stringify(this.state.recipes));
     });
   }
 
@@ -174,7 +173,10 @@ class RecipeBox extends Component {
         description: recipe,
         ingredients: ingredients
       }).sort((a, b) => { return (a.description < b.description) ? -1 : (a.description > b.description ? 1 : 0) } ),
+    }, () => { 
+      localStorage.setItem('recipes', JSON.stringify(this.state.recipes));
     });
+
   }
   updateRecipe(recipe, ingredients) {
     this.setState({
@@ -184,7 +186,10 @@ class RecipeBox extends Component {
                                    ingredients: ingredients
                                  }).sort((a, b) => { return (a.description < b.description) ? -1 : (a.description > b.description ? 1 : 0) } ),
 
+    }, () => { 
+      localStorage.setItem('recipes', JSON.stringify(this.state.recipes));
     })
+
   }
 
   render() {
